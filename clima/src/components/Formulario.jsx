@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
+import Error from './Error';
+import PropTypes from 'prop-types';
 
-const Formulario = () => {
+const Formulario = ({busqueda, guardarBusqueda, guardarConsulta}) => {
 
-//state del formulario
-const [busqueda, guardarBusqueda] = useState({
-    ciudad: '',
-    pais: ''
-});
+const [error, guardarError] = useState(false)
 
 //extraer ciudad pais
 const { ciudad, pais } = busqueda;
@@ -20,8 +18,30 @@ const handleChange = e => {
     });
 }
 
+// Cuando el usuario envia el form
+const handleSubmit = e => {
+    e.preventDefault();
+
+    //Validar
+    if (ciudad.trim() === '' || pais.trim() === '') {
+        guardarError(true);
+        return;
+    }
+    guardarError(false);
+
+    //Pasar el form al componente principal
+    
+    guardarConsulta(true);
+
+}
+
     return ( 
-        <form action="">
+        <form 
+            onSubmit={handleSubmit}
+        >
+            
+            {error ? <Error mensaje="Ambos campos son requeriodos" /> : null }
+
             <div className="input-field col s12">
                 <input
                     type="text"
@@ -53,9 +73,18 @@ const handleChange = e => {
                 </select>
                 <label htmlFor="pais">País: </label>
             </div>
-
+            <div className="input-field col s12">
+                <button className="waves-effect waves-light btn-large btn-block blue accent-4" type="submit" value="Buscar Clima">Buscar Clima
+                <i className="material-icons right">cloud</i>
+                </button>
+            </div>
         </form>
      );
 }
  
+Formulario.propTypes = {
+    busqueda: PropTypes.object.isRequired, 
+    guardarBusqueda: PropTypes.func.isRequired, 
+    guardarConsulta: PropTypes.func.isRequired
+}
 export default Formulario;
